@@ -19,7 +19,8 @@ RUN composer install --no-dev --optimize-autoloader
 
 # Nginx config
 RUN rm /etc/nginx/sites-enabled/default
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/templates/default.conf.template
+
 
 # Permission
 RUN chown -R www-data:www-data /var/www/html \
@@ -27,4 +28,6 @@ RUN chown -R www-data:www-data /var/www/html \
 
 EXPOSE 80
 
-CMD service nginx start && php-fpm
+CMD envsubst '$PORT' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf \
+    && service nginx start \
+    && php-fpm
