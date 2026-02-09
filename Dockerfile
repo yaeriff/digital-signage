@@ -30,5 +30,5 @@ RUN chown -R www-data:www-data /var/www/html \
 EXPOSE 80
 
 CMD envsubst '$PORT' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf \
-    && service nginx start \
-    && php-fpm
+    && php-fpm -F & nginx -g 'daemon off;'
+
