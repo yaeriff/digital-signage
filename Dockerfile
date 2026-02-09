@@ -4,7 +4,8 @@ FROM php:8.3-fpm
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libzip-dev \
-    zip unzip git curl nginx
+    zip unzip git curl nginx gettext-base
+
 
 # PHP extensions
 RUN docker-php-ext-install pdo pdo_mysql gd zip
