@@ -4,8 +4,8 @@ FROM php:8.3-fpm
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libzip-dev \
-    zip unzip git curl nginx gettext-base
-
+    zip unzip git curl \
+    nginx supervisor gettext-base
 
 # PHP extensions
 RUN docker-php-ext-install pdo pdo_mysql gd zip
@@ -22,6 +22,8 @@ RUN composer install --no-dev --optimize-autoloader
 RUN rm /etc/nginx/sites-enabled/default
 COPY nginx.conf /etc/nginx/templates/default.conf.template
 
+# Supervisor config
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Permission
 RUN chown -R www-data:www-data /var/www/html \
@@ -29,6 +31,4 @@ RUN chown -R www-data:www-data /var/www/html \
 
 EXPOSE 80
 
-CMD envsubst '$PORT' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf \
-    && php-fpm -F & nginx -g 'daemon off;'
-
+CMD ["/usr/bin/supervisord", "-n"]
