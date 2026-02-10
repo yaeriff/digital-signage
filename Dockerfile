@@ -25,3 +25,5 @@ RUN chmod -R 775 storage bootstrap/cache
 
 # Railway provides PORT
 CMD php -S 0.0.0.0:${PORT} -t public
+
+RUN php artisan migrate --force || true
