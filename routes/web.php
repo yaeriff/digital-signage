@@ -17,7 +17,7 @@ Route::get('/', function () {
     // A. Ambil Video Aktif
     $video = null;
     if (Schema::hasTable('videos')) {
-        $video = Video::where('is_active', true)->latest()->first() ?? Video::latest()->first();
+        $video = Video::latest()->first();
     }
 
     // B. Ambil Running Text
