@@ -39,19 +39,24 @@ Route::get('/dashboard', function () {
 
 
 Route::get('/', function () {
+
     // 1. Ambil Video Aktif
-    $video = Video::latest()->first();
-    
-    if (!$video) {
     $video = null;
+    if (Schema::hasTable('videos')) {
+        $video = Video::latest()->first();
     }
 
     // 2. Ambil Running Text (Ticker)
-    $ticker = Setting::where('key', 'ticker_text')->value('value') ?? 'Selamat Datang...';
+    $ticker = 'Selamat Datang...';
+    if (Schema::hasTable('settings')) {
+        $ticker = Setting::where('key', 'ticker_text')->value('value') ?? $ticker;
+    }
 
     // 3. Ambil Tanggal APBD
-    $apbdDate = Setting::where('key', 'apbd_date')->value('value') ?? 'DATA TERBARU';
+    $apbdDate = 'DATA TERBARU';
+    if (Schema::hasTable('settings')) {
+        $apbdDate = Setting::where('key', 'apbd_date')->value('value') ?? $apbdDate;
+    }
 
-    // Kirim semua ke view 'welcome'
     return view('welcome', compact('video', 'ticker', 'apbdDate'));
 });
