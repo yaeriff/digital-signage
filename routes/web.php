@@ -3,18 +3,21 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\ApbdController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\VideoController;
 use App\Models\Video;
 use App\Models\Setting;
+use App\Models\Agenda; // <--- Wajib ada
+use App\Models\Apbd;   // <--- Wajib ada
 
 // ====================================================
-//  1. HALAMAN TV / DISPLAY (Tampilan Utama untuk Layar TV)
+//  1. HALAMAN TV / DISPLAY (UTAMA)
 // ====================================================
 Route::get('/', function () {
-    // A. Ambil Video Aktif
+    // A. Ambil Video
     $video = null;
     if (Schema::hasTable('videos')) {
         $video = Video::latest()->first();
@@ -32,32 +35,47 @@ Route::get('/', function () {
         $apbdDate = Setting::where('key', 'apbd_date')->value('value') ?? $apbdDate;
     }
 
-    return view('welcome', compact('video', 'ticker', 'apbdDate'));
+    // D. AMBIL DATA AGENDA (Ini yang tadi ketinggalan)
+    $agendas = [];
+    if (Schema::hasTable('agendas')) {
+        $agendas = Agenda::latest()->get(); 
+    }
+
+    // E. AMBIL DATA APBD
+    $apbds = [];
+    if (Schema::hasTable('apbds')) {
+        $apbds = Apbd::all();
+    }
+
+    // Kirim SEMUA variable ke view (Video, Ticker, Tanggal, Agenda, APBD)
+    return view('welcome', compact('video', 'ticker', 'apbdDate', 'agendas', 'apbds'));
 });
 
+// ====================================================
+//  2. STORAGE LINK (Opsional)
+// ====================================================
+Route::get('/fix-storage', function () {
+    Artisan::call('storage:link');
+    return 'Storage Link Berhasil Dibuat!';
+});
 
 // ====================================================
-//  2. HALAMAN DASHBOARD ADMIN (TANPA LOGIN / GRATIS MASUK)
+//  3. DASHBOARD ADMIN
 // ====================================================
-
-// Perhatikan: Tidak ada lagi middleware(['auth']) disini.
 
 Route::get('/dashboard', function () {
     return view('dashboard'); 
 })->name('dashboard');
 
-// Route Resource Agenda
+// Route Resource
 Route::resource('agendas', AgendaController::class);
 
-// Route APBD
 Route::get('/apbd', [ApbdController::class, 'index'])->name('apbd.index');
 Route::post('/apbd/import', [ApbdController::class, 'import'])->name('apbd.import');
 Route::delete('/apbd/hapus', [ApbdController::class, 'destroy'])->name('apbd.destroy');
 
-// Route Settings
 Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
 Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
 
-// Route Video
 Route::get('/video', [VideoController::class, 'index'])->name('video.index');
 Route::post('/video', [VideoController::class, 'update'])->name('video.update');
