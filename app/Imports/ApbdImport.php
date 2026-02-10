@@ -80,7 +80,7 @@ class ApbdImport implements ToModel, WithStartRow, WithCalculatedFormulas
         $anggaranBel  = $bersihkanUang($row[$idxAnggaranBel] ?? 0);
         $realRpBel    = $bersihkanUang($row[$idxRealRpBel] ?? 0);  // Rupiah Asli (Desimal aman)
         
-        // Ambil Persen
+        // Ambil Persentase
         $realPersenPend = ($anggaranPend == 0) ? 0 : $bersihkanPersen($row[$idxRealPersenPend] ?? 0);
         $realPersenBel  = ($anggaranBel == 0)  ? 0 : $bersihkanPersen($row[$idxRealPersenBel] ?? 0);
 
