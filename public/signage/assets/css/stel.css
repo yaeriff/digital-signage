@@ -1,158 +1,158 @@
 /* --- VARIABLES --- */
 :root {
-  --primary-blue: #004cd9;
-  --soft-green: #c5e1a5; /* Background Kanan (Hijau Pastel) */
-  --dark-green: #164a41; /* Background Agenda & Tabel Header */
-  --warning-gold: #f1b24a;
-  --white: #ffffff;
-  --dark-grey: #444444;
+    --primary-blue: #004cd9;
+    --soft-green: #c5e1a5; /* Background Kanan (Hijau Pastel) */
+    --dark-green: #164a41; /* Background Agenda & Tabel Header */
+    --warning-gold: #f1b24a;
+    --white: #ffffff;
+    --dark-grey: #444444;
 
-  --header-height: 80px;
-  --footer-height: 36px;
+    --header-height: 80px;
+    --footer-height: 36px;
 }
 
 /* GLOBAL RESET */
 * {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 body {
-  font-family: "Montserrat", sans-serif;
-  background-color: var(--white);
-  overflow: hidden;
-  height: 100vh;
-  width: 100vw;
-  margin: 0;
+    font-family: "Montserrat", sans-serif;
+    background-color: var(--white);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
 }
 ::-webkit-scrollbar {
-  display: none;
+    display: none;
 }
 
 /* UTILITY COLORS */
 .bg-dark-green {
-  background-color: var(--dark-green) !important;
+    background-color: var(--dark-green) !important;
 }
 .bg-soft-green {
-  background: linear-gradient(to bottom, #9dc88d 0%, #eaf6d5 100%) !important;
+    background: linear-gradient(to bottom, #9dc88d 0%, #eaf6d5 100%) !important;
 }
 .bg-warning {
-  background-color: var(--warning-gold) !important;
+    background-color: var(--warning-gold) !important;
 }
 .text-warning {
-  color: var(--warning-gold) !important;
+    color: var(--warning-gold) !important;
 }
 .text-dark-green {
-  color: var(--dark-green) !important;
+    color: var(--dark-green) !important;
 }
 .text-dark-grey {
-  color: var(--dark-grey) !important;
+    color: var(--dark-grey) !important;
 }
 
 /* LAYOUT STRUCTURE */
 .main-layout-container {
-  height: 100vh;
+    height: 100vh;
 }
 .header-section {
-  height: var(--header-height);
-  background-color: var(--primary-blue);
-  display: flex;
-  align-items: center;
+    height: var(--header-height);
+    background-color: var(--primary-blue);
+    display: flex;
+    align-items: center;
 }
 
 .footer-section {
-  position: relative;
-  background-color: var(--warning-gold);
-  overflow: hidden;
-  height: var(--footer-height);
+    position: relative;
+    background-color: var(--warning-gold);
+    overflow: hidden;
+    height: var(--footer-height);
 
-  flex-shrink: 0;
+    flex-shrink: 0;
 }
 
 /* --- HEADER ELEMENTS --- */
 .logo-circle {
-  width: 60px;
-  height: 60px;
-  background-color: transparent;
-  border-radius: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
+    width: 60px;
+    height: 60px;
+    background-color: transparent;
+    border-radius: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
 }
 .logo-circle img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2));
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2));
 }
 
 .slogan-circle {
-  width: 100px;
-  height: 100px;
-  background-color: transparent;
-  border-radius: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  padding-left: 5px;
+    width: 100px;
+    height: 100px;
+    background-color: transparent;
+    border-radius: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    padding-left: 5px;
 }
 
 .slogan-circle img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2));
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2));
 }
 
 /* --- AGENDA CARD NEW STYLE (Horizontal Strip) --- */
 .agenda-card-new {
-  display: flex;
-  background-color: transparent;
-  border: 2px solid var(--warning-gold);
-  margin-bottom: 10px;
-  min-height: 75px; /* UKURAN DIPERKECIL (Sebelumnya 80px++) */
-  overflow: hidden;
+    display: flex;
+    background-color: transparent;
+    border: 2px solid var(--warning-gold);
+    margin-bottom: 10px;
+    min-height: 75px; /* UKURAN DIPERKECIL (Sebelumnya 80px++) */
+    overflow: hidden;
 }
 
 /* Kolom Waktu (Kiri - Kuning) */
 .ac-time {
-  background-color: var(--warning-gold);
-  color: var(--dark-green);
-  width: 35px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-  font-weight: 800;
-  font-size: 0.7rem;
-  letter-spacing: 1px;
-  padding: 5px 0;
+    background-color: var(--warning-gold);
+    color: var(--dark-green);
+    width: 35px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-weight: 800;
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+    padding: 5px 0;
 }
 
 /* Kolom Jam Detail (Kuning Pudar/Sama) */
 .ac-hours {
-  background-color: var(--warning-gold);
-  color: var(--dark-green);
-  width: 105px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  font-size: 1.05rem;
-  border-left: 2px solid var(--dark-green);
-  line-height: 1.1;
+    background-color: var(--warning-gold);
+    color: var(--dark-green);
+    width: 105px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.05rem;
+    border-left: 2px solid var(--dark-green);
+    line-height: 1.1;
 }
 
 /* Kolom Isi (Tengah) */
 .ac-content {
-  flex-grow: 1;
-  padding: 8px 15px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  color: white;
+    flex-grow: 1;
+    padding: 8px 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: white;
 }
 
 /* Kolom Tempat (Kanan - Opsional sesuai desain baru) */
@@ -166,228 +166,259 @@ body {
   color: var(--warning-gold);
 } */
 
+/* Agar video fit penuh & crop otomatis (Local Video) */
+video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover !important; /* <--- INI KUNCI UTAMA */
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* Khusus Youtube (Zoom dikit biar baris hitam ketutup) */
+iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+
+    /* Teknik Zoom: Memperbesar video 15% biar baris hitam kedorong keluar */
+    transform: scale(1.15);
+    transform-origin: center center;
+    pointer-events: none; /* Biar gak bisa diklik pause/play */
+}
+
+/* Pastikan Wadahnya memotong kelebihan zoom (Wajib) */
+#dynamic-content {
+    overflow: hidden !important;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: black; /* Warna dasar kalau video loading */
+}
+
 /* --- GAUGE CHART --- */
 .gauge-value {
-  position: absolute;
-  top: 64%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: var(--primary-blue);
+    position: absolute;
+    top: 64%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--primary-blue);
 }
 
 /* --- TABLE STYLING --- */
 .table-header-custom > div,
 .table-total-row > div {
-  border-right: 1px solid #dee2e6; /* Warna garis abu-abu halus */
+    border-right: 1px solid #dee2e6; /* Warna garis abu-abu halus */
 }
 
 .table-header-custom > div:last-child,
 .table-total-row > div:last-child {
-  border-right: none;
+    border-right: none;
 }
 
 /* Garis Vertikal untuk ISI TABEL (yang pakai TABLE) */
 .custom-table {
-  table-layout: fixed;
-  width: 100%;
-  border-collapse: collapse;
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse;
 }
 
 .custom-table td {
-  border-right: 1px solid #dee2e6;
-  word-wrap: break-word;
+    border-right: 1px solid #dee2e6;
+    word-wrap: break-word;
 }
 
 .custom-table td:last-child {
-  border-right: none;
+    border-right: none;
 }
 /*                                                                    */
 
 .table-header-custom {
-  background-color: var(--dark-green);
-  color: white;
-  font-weight: 700;
-  font-size: 0.6rem;
-  padding: 8px 0;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+    background-color: var(--dark-green);
+    color: white;
+    font-weight: 700;
+    font-size: 0.6rem;
+    padding: 8px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 /* Sub-header Jawa Tengah */
 .table-subheader-static {
-  border-bottom: 2px solid #ddd;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+    border-bottom: 2px solid #ddd;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 /* Styling Khusus Baris Total/Statis */
 .table-total-row {
-  padding: 7px 0;
-  font-family: "Montserrat", sans-serif;
-  letter-spacing: 0.5px;
+    padding: 7px 0;
+    font-family: "Montserrat", sans-serif;
+    letter-spacing: 0.5px;
 }
 .table-total-row > div {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding: 0 2px; /* Padding kiri-kanan kecil antar kolom */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0 2px; /* Padding kiri-kanan kecil antar kolom */
 }
 
 .custom-table tbody tr {
-  background-color: white;
+    background-color: white;
 }
 .custom-table td {
-  text-align: center !important; /* !important untuk menimpa settingan JS */
-  vertical-align: middle !important;
-  border-bottom: 1px solid #ddd;
-  padding: 6px 2px;
-  vertical-align: middle;
-  color: #333;
-  font-weight: 700;
-  /* text-align: center; */
-  font-size: 0.7rem;
+    text-align: center !important; /* !important untuk menimpa settingan JS */
+    vertical-align: middle !important;
+    border-bottom: 1px solid #ddd;
+    padding: 6px 2px;
+    vertical-align: middle;
+    color: #333;
+    font-weight: 700;
+    /* text-align: center; */
+    font-size: 0.7rem;
 
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .table-section .marquee-vertical-container {
-  mask-image: none;
-  -webkit-mask-image: none;
+    mask-image: none;
+    -webkit-mask-image: none;
 }
 
 .custom-table td:nth-child(2) {
-  text-align: center;
+    text-align: center;
 }
 .custom-table td:nth-child(3),
 .custom-table td:nth-child(5) {
-  text-align: center;
+    text-align: center;
 }
 
 /* --- MARQUEE ANIMATION (VERTICAL SCROLL) --- */
 .marquee-vertical-container {
-  overflow: hidden;
-  position: relative;
-  height: 100%;
+    overflow: hidden;
+    position: relative;
+    height: 100%;
 
-  /* -webkit-mask-image: linear-gradient(to bottom, black 45%, transparent 100%);
+    /* -webkit-mask-image: linear-gradient(to bottom, black 45%, transparent 100%);
   mask-image: linear-gradient(to bottom, black 45%, transparent 100%); */
 }
 
 .marquee-vertical-content {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  will-change: transform;
-  animation: scrollUp 174s linear infinite; /* Kecepatan disesuaikan */
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    will-change: transform;
+    animation: scrollUp 174s linear infinite; /* Kecepatan disesuaikan */
 }
 
 .agenda-section .marquee-vertical-content {
-  /* khusus jadwal */
-  animation-duration: 36s !important;
+    /* khusus jadwal */
+    animation-duration: 36s !important;
 }
 
 .agenda-section .marquee-vertical-container {
-  -webkit-mask-image: linear-gradient(to bottom, black 44%, transparent 100%);
-  mask-image: linear-gradient(to bottom, black 44%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 44%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 44%, transparent 100%);
 }
 
 @keyframes scrollUp {
-  0% {
-    transform: translateY(0);
-  }
-  100% {
-    transform: translateY(-50%);
-  }
+    0% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(-50%);
+    }
 }
 
 /* TICKER FOOTER */
 .ticker-wrap {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  left: 0;
-  top: 0;
-  z-index: 1; /* Lapisan di bawah label */
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    z-index: 1; /* Lapisan di bawah label */
 
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
 }
 .ticker {
-  font-size: 0.9rem !important;
-  white-space: nowrap;
-  display: inline-block;
-  padding-left: 100%;
-  animation: ticker 35s linear infinite;
-  color: var(--white);
-  font-weight: bold;
-  padding-top: 2px;
+    font-size: 0.9rem !important;
+    white-space: nowrap;
+    display: inline-block;
+    padding-left: 100%;
+    animation: ticker 35s linear infinite;
+    color: var(--white);
+    font-weight: bold;
+    padding-top: 2px;
 }
 
 @keyframes ticker {
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-  100% {
-    transform: translate3d(-100%, 0, 0);
-  }
+    0% {
+        transform: translate3d(0, 0, 0);
+    }
+    100% {
+        transform: translate3d(-100%, 0, 0);
+    }
 }
 
 .info-label {
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  z-index: 10;
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    z-index: 10;
 
-  background-color: var(--white);
+    background-color: var(--white);
 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 
-  padding: 0 30px;
+    padding: 0 30px;
 
-  border-radius: 0 40px 0 0;
-  box-shadow: 5px 0 10px rgba(0, 0, 0, 0.1);
-  white-space: nowrap;
+    border-radius: 0 40px 0 0;
+    box-shadow: 5px 0 10px rgba(0, 0, 0, 0.1);
+    white-space: nowrap;
 }
 /*                                        */
 /*  */
 
 #agenda-loop {
-  display: flex;
-  flex-direction: column;
-  gap: 15px; /* Jarak antar kartu */
-  padding-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Jarak antar kartu */
+    padding-bottom: 15px;
 }
 
 .agenda-card-new {
-  margin-bottom: 0 !important;
+    margin-bottom: 0 !important;
 
-  border-radius: 4px;
-  border: 1px solid #ffca2c;
-  overflow: hidden;
-  flex-shrink: 0;
+    border-radius: 4px;
+    border: 1px solid #ffca2c;
+    overflow: hidden;
+    flex-shrink: 0;
 }
 
 .agenda-section .marquee-vertical-container {
-  mask-image: linear-gradient(
-    to bottom,
-    transparent,
-    black 10%,
-    black 90%,
-    transparent
-  );
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent,
-    black 10%,
-    black 90%,
-    transparent
-  );
+    mask-image: linear-gradient(
+        to bottom,
+        transparent,
+        black 10%,
+        black 90%,
+        transparent
+    );
+    -webkit-mask-image: linear-gradient(
+        to bottom,
+        transparent,
+        black 10%,
+        black 90%,
+        transparent
+    );
 }

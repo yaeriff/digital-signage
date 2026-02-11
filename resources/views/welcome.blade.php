@@ -74,8 +74,19 @@
             <div class="col-left d-flex flex-column" style="width: 50%;">
                 
                 <div class="video-section bg-black position-relative" style="height: 50%;">
-                    <div id="dynamic-content" class="w-100 h-100">
-                        </div>
+                    <div id="dynamic-content" class="w-100 h-100 d-flex justify-content-center align-items-center overflow-hidden">
+                        @if($video)
+                            @if(Str::contains($video->file_path, 'youtube.com') || Str::contains($video->file_path, 'youtu.be'))
+                                <iframe src="https://www.youtube.com/embed/{{ \Str::afterLast($video->file_path, '/') }}?autoplay=1&mute=1&controls=0&loop=1&playlist={{ \Str::afterLast($video->file_path, '/') }}&showinfo=0&rel=0&iv_load_policy=3" allow="autoplay; encrypted-media"></iframe>
+                            @else
+                                <video autoplay muted loop playsinline>
+                                    <source src="{{ asset('storage/' . $video->file_path) }}" type="video/mp4">
+                                </video>
+                            @endif
+                        @else
+                            <h3 class="text-white">Tidak ada video</h3>
+                        @endif
+                    </div>
                 </div>
 
                 <div class="agenda-section bg-dark-green d-flex flex-column px-4 pb-1 pt-2 position-relative" style="height: 50%;">
