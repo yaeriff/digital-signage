@@ -167,34 +167,40 @@ body {
 } */
 
 /* Agar video fit penuh & crop otomatis (Local Video) */
+.video-section {
+    overflow: hidden !important; /* Wajib: Potong bagian yang keluar */
+    position: relative;
+    background: black;
+}
+
+/* Wadah Dalam (Dynamic Content) */
+#dynamic-content {
+    width: 100%;
+    height: 100%;
+    overflow: hidden !important;
+    position: relative;
+}
+
+/* Khusus Youtube (Jurus Zoom & Crop) */
+iframe {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100vw; /* Pakai Viewport Width biar lebar maksimal */
+    height: 100vh; /* Pakai Viewport Height */
+
+    /* PENTING: Zoom 140% dan geser ke tengah */
+    transform: translate(-50%, -50%) scale(1.4);
+
+    border: none;
+    pointer-events: none; /* AGAR TIDAK BISA DIKLIK / MUNCUL JUDUL */
+}
+
+/* Khusus Video Lokal */
 video {
     width: 100%;
     height: 100%;
-    object-fit: cover !important; /* <--- INI KUNCI UTAMA */
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
-/* Khusus Youtube (Zoom dikit biar baris hitam ketutup) */
-iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-
-    /* Teknik Zoom: Memperbesar video 15% biar baris hitam kedorong keluar */
-    transform: scale(1.15);
-    transform-origin: center center;
-    pointer-events: none; /* Biar gak bisa diklik pause/play */
-}
-
-/* Pastikan Wadahnya memotong kelebihan zoom (Wajib) */
-#dynamic-content {
-    overflow: hidden !important;
-    position: relative;
-    width: 100%;
-    height: 100%;
-    background: black; /* Warna dasar kalau video loading */
+    object-fit: cover !important;
 }
 
 /* --- GAUGE CHART --- */
