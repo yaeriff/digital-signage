@@ -20,7 +20,7 @@ class VideoController extends Controller
         $request->validate([
             'type' => 'required|in:local,youtube',
             // Validasi kondisional: Kalau type=local wajib ada file, kalau youtube wajib url
-            'video_file' => 'required_if:type,local|mimes:mp4,mov,avi|max:2097152', // Max 2GB
+            'video_file' => 'required_if:type,local|mimes:mp4,mov,avi|max:2048000', // Max 2GB
             'video_url'  => 'required_if:type,youtube|nullable|url',
         ]);
 
