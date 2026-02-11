@@ -161,13 +161,13 @@
 
                         <div class="table-total-row d-flex align-items-center flex-shrink-0 border-bottom text-dark-green fw-bold" style="background-color: #85bbb3ff;">
                             <div style="width:5%"></div>
-                            <div style="width:29%; text-align: center; font-size: 0.7rem;">TOTAL PROVINSI</div>
-                            <div style="width:24%; text-align: center; font-size: 0.7rem;">Rp 0</div>
-                            <div style="width:9%; text-align: center; font-size: 0.7rem;">0%</div>
-                            <div style="width:24%; text-align: center; font-size: 0.7rem;">
+                            <div style="width:29%; text-align: center; font-size: 0.7rem;">PROVINSI JAWA TENGAH</div>
+                            <div id="total-anggaran-pend" style="width:24%; text-align: center; font-size: 0.7rem;">Rp 0</div>
+                            <div id="total-realisasi-pend" style="width:9%; text-align: center; font-size: 0.7rem;">0%</div>
+                            <div id="total-anggaran-bel" style="width:24%; text-align: center; font-size: 0.7rem;">
                                 Rp {{ number_format($apbds->sum('anggaran'), 0, ',', '.') }}
                             </div>
-                            <div style="width:9%; text-align: center; font-size: 0.7rem;">
+                            <div id="total-realisasi-bel" style="width:9%; text-align: center; font-size: 0.7rem;">
                                 {{ count($apbds) > 0 ? number_format($apbds->avg('persen'), 1) : 0 }}%
                             </div>
                         </div>
