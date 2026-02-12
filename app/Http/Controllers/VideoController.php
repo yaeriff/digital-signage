@@ -10,6 +10,12 @@ use Illuminate\Support\Facades\Storage;
 
 class VideoController extends Controller
 {
+    public function index()
+    {
+        $video = Video::latest()->first();
+        return view('videos.index', compact('video'));
+    }
+
     public function uploadChunk(Request $request)
     {
         $receiver = new FileReceiver(
@@ -25,24 +31,9 @@ class VideoController extends Controller
         $save = $receiver->receive();
 
         if ($save->isFinished()) {
-
             $file = $save->getFile();
 
-            // 🔥 Buat nama unik (anti tabrakan)
-            $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
-
-            // 🔥 Simpan manual supaya lebih stabil
-            Storage::disk('public')->putFileAs(
-                'videos',
-                $file,
-                $fileName
-            );
-
-            // Hapus file temporary chunk
-            unlink($file->getPathname());
-
-            // Simpan ke database
-            $path = 'videos/' . $fileName;
+            $path = $file->store('videos', 'public');
 
             Video::create([
                 'type' => 'local',
@@ -55,12 +46,10 @@ class VideoController extends Controller
             ]);
         }
 
-        // Kalau belum selesai
         $handler = $save->handler();
 
         return response()->json([
             "done" => $handler->getPercentageDone(),
         ]);
     }
-
 }
