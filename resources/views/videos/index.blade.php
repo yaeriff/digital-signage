@@ -54,7 +54,10 @@
 
                     <div class="mb-3">
                         <label class="form-label">Upload Video (.mp4)</label>
-                        <input type="file" id="video_file" class="form-control">
+                        <input type="file" 
+                                id="video_file" 
+                                name="video_file"
+                                class="form-control">
                         <small class="text-muted">Maksimal ukuran file besar (Chunk Upload).</small>
                     </div>
 

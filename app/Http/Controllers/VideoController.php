@@ -25,8 +25,13 @@ class VideoController extends Controller
         );
 
         if (!$receiver->isUploaded()) {
-            return response()->json(['error' => 'Upload gagal'], 400);
+            return response()->json([
+                'error' => 'File tidak terdeteksi',
+                'all_request' => $request->all(),
+                'files' => $request->files->all()
+            ], 400);
         }
+
 
         $save = $receiver->receive();
 
