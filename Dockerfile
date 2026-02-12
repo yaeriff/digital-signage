@@ -29,3 +29,8 @@ RUN chmod -R 775 storage bootstrap/cache
 CMD php -S 0.0.0.0:${PORT} -t public
 
 RUN php artisan migrate --force || true
+
+RUN echo "upload_max_filesize=200M" >> /usr/local/etc/php/conf.d/uploads.ini
+RUN echo "post_max_size=200M" >> /usr/local/etc/php/conf.d/uploads.ini
+RUN echo "max_execution_time=300" >> /usr/local/etc/php/conf.d/uploads.ini
+RUN echo "max_input_time=300" >> /usr/local/etc/php/conf.d/uploads.ini
