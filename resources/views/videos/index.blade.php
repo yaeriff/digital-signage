@@ -56,7 +56,9 @@
 
                     <div class="mb-3" id="containerLocal">
                         <label class="form-label">Upload Video (.mp4)</label>
-                        <input type="file" id="video_file" name="video_file" class="form-control">
+                        <div class="input-group">
+                            <input type="file" id="video_file" name="video_file" class="form-control">
+                        </div>
                         <small class="text-muted">Maksimal ukuran file besar 500MB (Chunk Upload).</small>
                     </div>
 
@@ -114,15 +116,21 @@
                     testChunks: false
                 });
 
-                r.assignBrowse(document.getElementById('video_file'));
-
+            r.assignBrowse(document.getElementById('video_file'));
                 // Menampilkan nama file secara manual setelah dipilih
                 document.getElementById('video_file').addEventListener('change', function(e) {
-                    let fileName = e.target.files[0] ? e.target.files[0].name : "No file chosen";
-                    console.log("File terpilih: " + fileName);
-                    
-                    // Opsional: Jika Anda ingin menampilkan nama file di elemen teks tertentu
-                    document.getElementById('fileInfo').innerHTML = "File terpilih: <b>" + fileName + "</b>";
+                    const file = e.target.files[0];
+                    if (file) {
+                        // Menampilkan nama file di bawah tombol (elemen fileInfo)
+                        document.getElementById('fileInfo').innerHTML = "File terpilih: <b>" + file.name + "</b>";
+                        
+                        // Preview Video (Opsional, jika ingin langsung muncul previewnya)
+                        const preview = document.getElementById('previewVideo');
+                        preview.src = URL.createObjectURL(file);
+                        preview.classList.remove('d-none');
+                    } else {
+                        document.getElementById('fileInfo').innerHTML = "";
+                    }
                 });
 
                 // Tambahkan event handling dasar untuk progress
@@ -140,6 +148,12 @@
 
                 r.on('fileError', function(file, message) {
                     alert("Upload gagal: " + message);
+                });
+
+                r.on('fileAdded', function(file) {
+                    // Ini memastikan saat Resumable menangkap file, 
+                    // teks "No file chosen" di beberapa browser ikut terupdate atau minimal terwakili di fileInfo
+                    document.getElementById('fileInfo').innerHTML = "File terpilih: <b>" + file.fileName + "</b>";
                 });
             }
 
