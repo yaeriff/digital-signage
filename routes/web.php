@@ -78,7 +78,7 @@ Route::get('/settings', [SettingController::class, 'index'])->name('settings.ind
 Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
 
 Route::get('/video', [VideoController::class, 'index'])->name('video.index');
-Route::post('/video', [VideoController::class, 'update'])->name('video.update');
+// Route::post('/video', [VideoController::class, 'update'])->name('video.update');
 
 Route::post('/upload-chunk', [VideoController::class, 'uploadChunk'])
     ->name('upload.chunk');
