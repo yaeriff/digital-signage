@@ -116,6 +116,15 @@
 
                 r.assignBrowse(document.getElementById('video_file'));
 
+                // Menampilkan nama file secara manual setelah dipilih
+                document.getElementById('video_file').addEventListener('change', function(e) {
+                    let fileName = e.target.files[0] ? e.target.files[0].name : "No file chosen";
+                    console.log("File terpilih: " + fileName);
+                    
+                    // Opsional: Jika Anda ingin menampilkan nama file di elemen teks tertentu
+                    document.getElementById('fileInfo').innerHTML = "File terpilih: <b>" + fileName + "</b>";
+                });
+
                 // Tambahkan event handling dasar untuk progress
                 r.on('fileProgress', function(file) {
                     let percent = Math.floor(file.progress() * 100);
