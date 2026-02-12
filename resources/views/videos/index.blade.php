@@ -83,96 +83,71 @@
     </div>
 
     <script>
-        // 1. Toggle Input Logic
+    // Pastikan fungsi toggle jalan meskipun script lain error
         function toggleInput() {
             const isYoutube = document.getElementById('typeYoutube').checked;
-            const containerLocal = document.getElementById('containerLocal');
-            const containerYoutube = document.getElementById('containerYoutube');
-            const previewVideo = document.getElementById('previewVideo');
-
-            if (isYoutube) {
-                containerLocal.classList.add('d-none');
-                containerYoutube.classList.remove('d-none');
-                previewVideo.classList.add('d-none'); // Sembunyikan preview lokal jika pindah ke YT
-            } else {
-                containerLocal.classList.remove('d-none');
-                containerYoutube.classList.add('d-none');
-            }
+            document.getElementById('containerLocal').classList.toggle('d-none', isYoutube);
+            document.getElementById('containerYoutube').classList.toggle('d-none', !isYoutube);
         }
 
-        // 2. Resumable.js Logic (Local File)
-        let r = new Resumable({
-            target: "{{ route('upload.chunk') }}",
-            headers: { 'X-CSRF-TOKEN': "{{ csrf_token() }}" },
-            fileParameterName: 'video_file',
-            chunkSize: 5 * 1024 * 1024,
-            testChunks: false
-        });
+        // Inisialisasi setelah semua library siap
+        window.onload = function() {
+            // 1. Cek apakah Resumable termuat
+            if (typeof Resumable !== 'undefined') {
+                var r = new Resumable({
+                    target: "{{ route('upload.chunk') }}",
+                    headers: { 'X-CSRF-TOKEN': "{{ csrf_token() }}" },
+                    fileParameterName: 'video_file',
+                    chunkSize: 5 * 1024 * 1024,
+                    testChunks: false
+                });
+                r.assignBrowse(document.getElementById('video_file'));
 
-        r.assignBrowse(document.getElementById('video_file'));
-
-        // 3. Tombol Upload (Handel 2 Kondisi)
-        document.getElementById('startUpload').addEventListener('click', function() {
-            const isYoutube = document.getElementById('typeYoutube').checked;
-
-            if (isYoutube) {
-                // Logika Simpan Link YouTube
-                const url = document.getElementById('video_url').value;
-                if (!url) {
-                    alert("Masukkan link YouTube terlebih dahulu!");
-                    return;
-                }
-                
-                // Kirim ke route yang sama atau route khusus update link
-                axios.post("{{ route('video.update') }}", { // Pastikan route ini sesuai di Controller Anda
-                    type: 'youtube',
-                    video_url: url,
-                    _token: "{{ csrf_token() }}"
-                })
-                .then(res => {
-                    alert("Link YouTube berhasil disimpan!");
-                    location.reload();
-                })
-                .catch(err => {
-                    alert("Gagal menyimpan link.");
+                r.on('fileProgress', function(file) {
+                    let percent = Math.floor(file.progress() * 100);
+                    document.getElementById('progressBar').style.width = percent + "%";
+                    document.getElementById('progressBar').innerText = percent + "%";
                 });
 
-            } else {
-                // Logika Upload File Lokal
-                if (r.files.length === 0) {
-                    alert("Pilih file video terlebih dahulu!");
-                    return;
-                }
-                r.upload();
+                r.on('fileSuccess', function() {
+                    alert("Upload file berhasil!");
+                    location.reload();
+                });
             }
-        });
 
-        // Progress Bar & Success File Lokal
-        r.on('fileProgress', function(file) {
-            let percent = Math.floor(file.progress() * 100);
-            let pb = document.getElementById('progressBar');
-            pb.style.width = percent + "%";
-            pb.innerText = percent + "%";
-        });
+            // 2. Logika Tombol Simpan (Local & YouTube)
+            document.getElementById('startUpload').addEventListener('click', function() {
+                const isYoutube = document.getElementById('typeYoutube').checked;
 
-        r.on('fileSuccess', function(file) {
-            alert("Upload file lokal selesai!");
-            location.reload();
-        });
+                if (isYoutube) {
+                    const url = document.getElementById('video_url').value;
+                    if (!url) return alert("Isi link YouTube!");
 
-        // Preview Video Lokal
-        document.getElementById('video_file').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
+                    // Gunakan fetch jika axios diblokir browser
+                    fetch("{{ route('video.update') }}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                        },
+                        body: JSON.stringify({ type: 'youtube', video_url: url })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        alert("Link YouTube berhasil disimpan!");
+                        location.reload();
+                    })
+                    .catch(err => alert("Gagal simpan link. Cek koneksi/blokir browser."));
 
-            // Nama file otomatis muncul di input karena kita menggunakan class "form-control" pada input type file
-            const preview = document.getElementById('previewVideo');
-            const fileInfo = document.getElementById('fileInfo');
-            
-            preview.src = URL.createObjectURL(file);
-            preview.classList.remove('d-none');
-            fileInfo.innerHTML = `File terpilih: <b>${file.name}</b> (${(file.size / (1024*1024)).toFixed(2)} MB)`;
-        });
+                } else {
+                    if (typeof r !== 'undefined' && r.files.length > 0) {
+                        r.upload();
+                    } else {
+                        alert("Pilih file video dulu!");
+                    }
+                }
+            });
+        };
     </script>
 
 </body>
