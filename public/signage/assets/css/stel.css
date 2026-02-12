@@ -181,7 +181,7 @@ body {
     position: relative;
 }
 
-/* Khusus Youtube (Jurus Zoom & Crop) */
+/* Khusus Youtube */
 iframe {
     position: absolute;
     top: 50%;
