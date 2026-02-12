@@ -52,18 +52,15 @@
                         </div>
                     </div>
 
-                    <div class="mb-3">
+                    <div class="mb-3" id="containerLocal">
                         <label class="form-label">Upload Video (.mp4)</label>
-                        <input type="file" 
-                                id="video_file" 
-                                name="video_file"
-                                class="form-control">
-                        <small class="text-muted">Maksimal ukuran file besar (Chunk Upload).</small>
+                        <input type="file" id="video_file" name="video_file" class="form-control">
+                        <small class="text-muted">Maksimal ukuran file besar 500MB (Chunk Upload).</small>
                     </div>
 
-                    <div class="mb-3 d-none" id="inputYoutube">
+                    <div class="mb-3 d-none" id="containerYoutube">
                         <label class="form-label">Masukkan Link YouTube</label>
-                        <input type="text" name="video_url" class="form-control" placeholder="Contoh: https://www.youtube.com/watch?v=dQw4w9WgXcQ">
+                        <input type="text" id="video_url" name="video_url" class="form-control" placeholder="Contoh: https://www.youtube.com/watch?v=dQw4w9WgXcQ">
                     </div>
 
                     <div class="mb-4">
@@ -73,17 +70,12 @@
                         </div>
                     </div>
 
-                    <button type="button" id="startUpload" class="btn btn-danger">
-                        Upload Video
-                    </button>
-
+                    <button type="button" id="startUpload" class="btn btn-danger">Simpan Video</button>
                     <div class="mt-2 small text-muted" id="fileInfo"></div>
-
-                    <div class="mt-3">
+                    
+                    <div class="mt-3 text-center">
                         <video id="previewVideo" class="w-50 d-none" controls></video>
                     </div>
-
-                    <a href="{{ route('agendas.index') }}" class="btn btn-outline-secondary ms-2">Kembali</a>
                 </form>
 
             </div>
@@ -91,89 +83,96 @@
     </div>
 
     <script>
+        // 1. Toggle Input Logic
         function toggleInput() {
             const isYoutube = document.getElementById('typeYoutube').checked;
+            const containerLocal = document.getElementById('containerLocal');
+            const containerYoutube = document.getElementById('containerYoutube');
+            const previewVideo = document.getElementById('previewVideo');
+
             if (isYoutube) {
-                document.getElementById('inputLocal').classList.add('d-none');
-                document.getElementById('inputYoutube').classList.remove('d-none');
+                containerLocal.classList.add('d-none');
+                containerYoutube.classList.remove('d-none');
+                previewVideo.classList.add('d-none'); // Sembunyikan preview lokal jika pindah ke YT
             } else {
-                document.getElementById('inputLocal').classList.remove('d-none');
-                document.getElementById('inputYoutube').classList.add('d-none');
+                containerLocal.classList.remove('d-none');
+                containerYoutube.classList.add('d-none');
             }
         }
 
-    
-    </script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/resumable.js/1.1.0/resumable.min.js"></script>
-
-    <script>
+        // 2. Resumable.js Logic (Local File)
         let r = new Resumable({
-        target: "{{ route('upload.chunk') }}",
-        headers: {
-            'X-CSRF-TOKEN': "{{ csrf_token() }}"
-        },
-        fileParameterName: 'video_file', 
-        fileType: ['mp4','mov','avi'],
-        chunkSize: 5 * 1024 * 1024,
-        simultaneousUploads: 1,
-        testChunks: false
-    });
+            target: "{{ route('upload.chunk') }}",
+            headers: { 'X-CSRF-TOKEN': "{{ csrf_token() }}" },
+            fileParameterName: 'video_file',
+            chunkSize: 5 * 1024 * 1024,
+            testChunks: false
+        });
 
-    document.getElementById('video_file').addEventListener('change', function(e){
-        if (e.target.files.length > 0) {
-            alert("File dipilih: " + e.target.files[0].name);
-        }
-    });
+        r.assignBrowse(document.getElementById('video_file'));
 
-    let progressBar = document.getElementById('progressBar');
+        // 3. Tombol Upload (Handel 2 Kondisi)
+        document.getElementById('startUpload').addEventListener('click', function() {
+            const isYoutube = document.getElementById('typeYoutube').checked;
 
-    r.assignBrowse(document.getElementById('video_file'));
+            if (isYoutube) {
+                // Logika Simpan Link YouTube
+                const url = document.getElementById('video_url').value;
+                if (!url) {
+                    alert("Masukkan link YouTube terlebih dahulu!");
+                    return;
+                }
+                
+                // Kirim ke route yang sama atau route khusus update link
+                axios.post("{{ route('video.update') }}", { // Pastikan route ini sesuai di Controller Anda
+                    type: 'youtube',
+                    video_url: url,
+                    _token: "{{ csrf_token() }}"
+                })
+                .then(res => {
+                    alert("Link YouTube berhasil disimpan!");
+                    location.reload();
+                })
+                .catch(err => {
+                    alert("Gagal menyimpan link.");
+                });
 
-    document.getElementById('startUpload').addEventListener('click', function(){
-        if (r.files.length === 0) {
-            alert("Pilih file dulu!");
-            return;
-        }
-        r.upload();
-    });
+            } else {
+                // Logika Upload File Lokal
+                if (r.files.length === 0) {
+                    alert("Pilih file video terlebih dahulu!");
+                    return;
+                }
+                r.upload();
+            }
+        });
 
-    r.on('fileProgress', function(file){
-        let percent = Math.floor(file.progress() * 100);
-        progressBar.style.width = percent + "%";
-        progressBar.innerText = percent + "%";
-    });
+        // Progress Bar & Success File Lokal
+        r.on('fileProgress', function(file) {
+            let percent = Math.floor(file.progress() * 100);
+            let pb = document.getElementById('progressBar');
+            pb.style.width = percent + "%";
+            pb.innerText = percent + "%";
+        });
 
-    r.on('fileSuccess', function(file, response){
-        alert("Upload selesai!");
-        location.reload();
-    });
+        r.on('fileSuccess', function(file) {
+            alert("Upload file lokal selesai!");
+            location.reload();
+        });
 
-    r.on('fileError', function(file, message){
-        console.error(message);
-        alert("Upload gagal!");
-    });
+        // Preview Video Lokal
+        document.getElementById('video_file').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
 
-    let fileInput = document.getElementById('video_file');
-    let preview = document.getElementById('previewVideo');
-    let fileInfo = document.getElementById('fileInfo');
-
-    fileInput.addEventListener('change', function(e){
-        const file = e.target.files[0];
-        if (!file) return;
-
-        const url = URL.createObjectURL(file);
-        preview.src = url;
-        preview.classList.remove('d-none');
-
-        fileInfo.innerHTML = `
-            Nama File: <b>${file.name}</b><br>
-            Ukuran: ${(file.size / (1024*1024)).toFixed(2)} MB<br>
-            Tipe: ${file.type}
-        `;
-    });
-
-
+            // Nama file otomatis muncul di input karena kita menggunakan class "form-control" pada input type file
+            const preview = document.getElementById('previewVideo');
+            const fileInfo = document.getElementById('fileInfo');
+            
+            preview.src = URL.createObjectURL(file);
+            preview.classList.remove('d-none');
+            fileInfo.innerHTML = `File terpilih: <b>${file.name}</b> (${(file.size / (1024*1024)).toFixed(2)} MB)`;
+        });
     </script>
 
 </body>
