@@ -202,7 +202,7 @@ video {
     height: 100%;
     object-fit: cover !important;
 }
-
+/*                      */
 /* --- GAUGE CHART --- */
 .gauge-value {
     position: absolute;
