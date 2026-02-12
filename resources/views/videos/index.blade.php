@@ -70,7 +70,14 @@
                         </div>
                     </div>
 
-                    <button id="startUpload" class="btn btn-danger">Upload Video</button>
+                    <button type="button" id="startUpload" class="btn btn-danger">
+                        Upload Video
+                    </button>
+
+                    <div class="mt-3">
+                        <video id="previewVideo" class="w-50 d-none" controls></video>
+                    </div>
+
                     <a href="{{ route('agendas.index') }}" class="btn btn-outline-secondary ms-2">Kembali</a>
                 </form>
 
@@ -132,6 +139,19 @@
         console.error(message);
         alert("Upload gagal!");
     });
+
+    let fileInput = document.getElementById('video_file');
+    let preview = document.getElementById('previewVideo');
+
+    fileInput.addEventListener('change', function(e){
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const url = URL.createObjectURL(file);
+        preview.src = url;
+        preview.classList.remove('d-none');
+    });
+
     </script>
 
 </body>
