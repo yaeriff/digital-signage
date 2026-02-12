@@ -3,7 +3,9 @@
 <head>
     <title>Kelola Video - Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.7/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/resumable.js/1.1.0/resumable.min.js"></script>
+
 </head>
 <body class="bg-light">
     <div class="container mt-5">
@@ -92,28 +94,27 @@
 
         // Inisialisasi setelah semua library siap
         window.onload = function() {
-            // 1. Cek apakah Resumable termuat
-            if (typeof Resumable !== 'undefined') {
-                var r = new Resumable({
-                    target: "{{ route('upload.chunk') }}",
-                    headers: { 'X-CSRF-TOKEN': "{{ csrf_token() }}" },
-                    fileParameterName: 'video_file',
-                    chunkSize: 5 * 1024 * 1024,
-                    testChunks: false
-                });
-                r.assignBrowse(document.getElementById('video_file'));
+            let r; 
 
-                r.on('fileProgress', function(file) {
-                    let percent = Math.floor(file.progress() * 100);
-                    document.getElementById('progressBar').style.width = percent + "%";
-                    document.getElementById('progressBar').innerText = percent + "%";
-                });
+            document.addEventListener("DOMContentLoaded", function() {
+                // Pastikan library sudah dimuat
+                if (typeof Resumable !== 'undefined') {
+                    r = new Resumable({
+                        target: "{{ route('upload.chunk') }}",
+                        headers: { 'X-CSRF-TOKEN': "{{ csrf_token() }}" },
+                        fileParameterName: 'video_file',
+                        chunkSize: 5 * 1024 * 1024,
+                        testChunks: false
+                    });
 
-                r.on('fileSuccess', function() {
-                    alert("Upload file berhasil!");
-                    location.reload();
-                });
-            }
+                    // Hubungkan input file ke Resumable
+                    r.assignBrowse(document.getElementById('video_file'));
+                    
+                    console.log("Resumable siap digunakan.");
+                } else {
+                    console.error("Library Resumable gagal dimuat! Periksa koneksi internet atau CDN.");
+                }
+            });
 
             // 2. Logika Tombol Simpan (Local & YouTube)
             document.getElementById('startUpload').addEventListener('click', function() {
@@ -140,10 +141,10 @@
                     .catch(err => alert("Gagal simpan link. Cek koneksi/blokir browser."));
 
                 } else {
-                    if (typeof r !== 'undefined' && r.files.length > 0) {
+                    if (r && r.files.length > 0) {
                         r.upload();
                     } else {
-                        alert("Pilih file video dulu!");
+                        alert("Pilih file video dulu! (Pastikan sistem sudah siap)");
                     }
                 }
             });
