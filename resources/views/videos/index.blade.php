@@ -21,10 +21,10 @@
                     <label class="fw-bold d-block mb-2">Video Aktif Saat Ini:</label>
                     @if($video)
                         @if($video->type == 'local')
-                            <span class="badge bg-primary mb-2">File Lokal</span>
+                            <!-- <span class="badge bg-primary mb-2">File Lokal</span>
                             <div class="ratio ratio-16x9 w-50 mx-auto">
                                 <video controls src="{{ asset('storage/' . $video->url) }}"></video>
-                            </div>
+                            </div> -->
                         @else
                             <span class="badge bg-danger mb-2">YouTube</span>
                             <p class="text-muted small">{{ $video->url }}</p>
