@@ -82,3 +82,4 @@ Route::get('/video', [VideoController::class, 'index'])->name('video.index');
 
 Route::post('/upload-chunk', [VideoController::class, 'uploadChunk'])
     ->name('upload.chunk');
+Route::post('/video/update', [VideoController::class, 'update'])->name('video.update');

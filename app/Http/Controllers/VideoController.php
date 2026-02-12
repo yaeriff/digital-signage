@@ -57,4 +57,26 @@ class VideoController extends Controller
             "done" => $handler->getPercentageDone(),
         ]);
     }
+
+    
+    public function update(Request $request)
+    {
+        // Validasi input
+        $request->validate([
+            'type' => 'required|in:youtube,local',
+            'video_url' => 'required_if:type,youtube'
+        ]);
+
+        if ($request->type === 'youtube') {
+            // Simpan link YouTube ke database
+            Video::create([
+                'type' => 'youtube',
+                'url'  => $request->video_url
+            ]);
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Tipe tidak valid'], 400);
+    }
 }
