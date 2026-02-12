@@ -36,9 +36,8 @@
 
                 <hr>
 
-                <form id="uploadForm" action="{{ route('video.update') }}" method="POST" enctype="multipart/form-data">
+                <form id="uploadForm" method="POST" enctype="multipart/form-data">
                     @csrf
-                    
                     <div class="mb-3">
                         <label class="fw-bold">Pilih Sumber Video:</label>
                         <div class="d-flex gap-3 mt-1">
@@ -53,10 +52,10 @@
                         </div>
                     </div>
 
-                    <div class="mb-3" id="inputLocal">
+                    <div class="mb-3">
                         <label class="form-label">Upload Video (.mp4)</label>
-                        <input type="file" name="video_file" id="video_file" class="form-control" accept="video/mp4,video/x-m4v,video/*">
-                        <small class="text-muted">Maksimal ukuran file 2GB.</small>
+                        <input type="file" id="video_file" class="form-control">
+                        <small class="text-muted">Maksimal ukuran file besar (Chunk Upload).</small>
                     </div>
 
                     <div class="mb-3 d-none" id="inputYoutube">
@@ -64,18 +63,14 @@
                         <input type="text" name="video_url" class="form-control" placeholder="Contoh: https://www.youtube.com/watch?v=dQw4w9WgXcQ">
                     </div>
 
-                    <div id="progressArea" class="mb-4 d-none">
-                        <div class="d-flex justify-content-between mb-1">
-                            <span class="fw-bold small text-primary" id="progressStatus">Mengunggah...</span>
-                            <span class="fw-bold small text-dark" id="uploadSpeed">0 MB/s</span>
-                        </div>
+                    <div class="mb-4">
                         <div class="progress" style="height: 25px;">
-                            <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: 0%">0%</div>
+                            <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-primary"
+                                role="progressbar" style="width: 0%">0%</div>
                         </div>
-                        <small class="text-danger mt-1 d-none" id="errorMessage"></small>
                     </div>
 
-                    <button type="submit" id="btnSubmit" class="btn btn-danger">Simpan Video</button>
+                    <button id="startUpload" class="btn btn-danger">Upload Video</button>
                     <a href="{{ route('agendas.index') }}" class="btn btn-outline-secondary ms-2">Kembali</a>
                 </form>
 
@@ -95,129 +90,143 @@
             }
         }
 
-        // --- SCRIPT BARU UNTUK UPLOAD PROGRESS ---
-    document.getElementById('uploadForm').addEventListener('submit', function(e) {
+    // --- SCRIPT BARU UNTUK UPLOAD PROGRESS ---
+    // document.getElementById('uploadForm').addEventListener('submit', function(e) {
         
-        // Cek apakah mode Local File dipilih?
-        const isLocal = document.getElementById('typeLocal').checked;
-        const fileInput = document.getElementById('video_file');
+    //     // Cek apakah mode Local File dipilih?
+    //     const isLocal = document.getElementById('typeLocal').checked;
+    //     const fileInput = document.getElementById('video_file');
 
-        // Jika mode Youtube, biarkan submit biasa (karena tidak butuh upload besar)
-        if (!isLocal || fileInput.files.length === 0) {
-            return; // Lanjut submit biasa
-        }
+    //     // Jika mode Youtube, biarkan submit biasa (karena tidak butuh upload besar)
+    //     if (!isLocal || fileInput.files.length === 0) {
+    //         return; // Lanjut submit biasa
+    //     }
 
-        // Jika mode Local, kita ambil alih dengan AJAX
-        e.preventDefault(); 
+    //     // Jika mode Local, kita ambil alih dengan AJAX
+    //     e.preventDefault(); 
 
-        const formData = new FormData(this);
-        const progressBar = document.getElementById('progressBar');
-        const progressArea = document.getElementById('progressArea');
-        const progressStatus = document.getElementById('progressStatus');
-        const uploadSpeed = document.getElementById('uploadSpeed');
-        const btnSubmit = document.getElementById('btnSubmit');
-        const errorMessage = document.getElementById('errorMessage');
+    //     const formData = new FormData(this);
+    //     const progressBar = document.getElementById('progressBar');
+    //     const progressArea = document.getElementById('progressArea');
+    //     const progressStatus = document.getElementById('progressStatus');
+    //     const uploadSpeed = document.getElementById('uploadSpeed');
+    //     const btnSubmit = document.getElementById('btnSubmit');
+    //     const errorMessage = document.getElementById('errorMessage');
 
-        // Tampilkan Progress Bar
-        progressArea.classList.remove('d-none');
-        btnSubmit.disabled = true; // Matikan tombol submit biar ga didouble klik
-        btnSubmit.innerText = "Sedang Mengunggah...";
-        errorMessage.classList.add('d-none');
+    //     // Tampilkan Progress Bar
+    //     progressArea.classList.remove('d-none');
+    //     btnSubmit.disabled = true; // Matikan tombol submit biar ga didouble klik
+    //     btnSubmit.innerText = "Sedang Mengunggah...";
+    //     errorMessage.classList.add('d-none');
 
-        // Variabel untuk hitung kecepatan
-        let lastLoaded = 0;
-        let lastTime = Date.now();
+    //     // Variabel untuk hitung kecepatan
+    //     let lastLoaded = 0;
+    //     let lastTime = Date.now();
 
-        axios.post("{{ route('video.update') }}", formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            },
-            onUploadProgress: function(progressEvent) {
-                // 1. Hitung Persentase
-                const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+    //     axios.post("{{ route('video.update') }}", formData, {
+    //         headers: {
+    //             'Content-Type': 'multipart/form-data'
+    //         },
+    //         onUploadProgress: function(progressEvent) {
+    //             // 1. Hitung Persentase
+    //             const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
                 
-                // Update Bar
-                progressBar.style.width = percentCompleted + '%';
-                progressBar.innerText = percentCompleted + '%';
+    //             // Update Bar
+    //             progressBar.style.width = percentCompleted + '%';
+    //             progressBar.innerText = percentCompleted + '%';
 
-                // 2. Hitung Kecepatan Upload
-                const currentTime = Date.now();
-                const timeDiff = (currentTime - lastTime) / 1000; // dalam detik
+    //             // 2. Hitung Kecepatan Upload
+    //             const currentTime = Date.now();
+    //             const timeDiff = (currentTime - lastTime) / 1000; // dalam detik
 
-                // Hitung speed tiap 0.5 detik agar angka tidak berkedip terlalu cepat
-                if (timeDiff >= 0.5) {
-                    const loadedDiff = progressEvent.loaded - lastLoaded; // byte yang terupload dalam selang waktu
-                    const speedBytes = loadedDiff / timeDiff; // byte per detik
-                    const speedMB = (speedBytes / (1024 * 1024)).toFixed(2); // Convert ke MB/s
+    //             // Hitung speed tiap 0.5 detik agar angka tidak berkedip terlalu cepat
+    //             if (timeDiff >= 0.5) {
+    //                 const loadedDiff = progressEvent.loaded - lastLoaded; // byte yang terupload dalam selang waktu
+    //                 const speedBytes = loadedDiff / timeDiff; // byte per detik
+    //                 const speedMB = (speedBytes / (1024 * 1024)).toFixed(2); // Convert ke MB/s
 
-                    uploadSpeed.innerText = speedMB + " MB/s";
+    //                 uploadSpeed.innerText = speedMB + " MB/s";
 
-                    // Reset variabel last
-                    lastLoaded = progressEvent.loaded;
-                    lastTime = currentTime;
-                }
+    //                 // Reset variabel last
+    //                 lastLoaded = progressEvent.loaded;
+    //                 lastTime = currentTime;
+    //             }
 
-                // Ubah status teks
-                if(percentCompleted < 100) {
-                    progressStatus.innerText = `Terupload: ${(progressEvent.loaded / (1024*1024)).toFixed(1)} MB / ${(progressEvent.total / (1024*1024)).toFixed(1)} MB`;
-                } else {
-                    progressStatus.innerText = "Finishing... Tunggu respon server.";
-                    uploadSpeed.innerText = "";
-                    progressBar.classList.add('bg-success');
-                    progressBar.classList.remove('bg-primary');
-                }
-            }
-        })
-        .then(function (response) {
-            // Sukses
-            window.location.reload(); // Reload halaman untuk memunculkan flash message sukses dari Laravel
-        })
-        .catch(function (error) {
-            // Gagal
-            console.error(error);
-            btnSubmit.disabled = false;
-            btnSubmit.innerText = "Simpan Video";
-            progressArea.classList.add('d-none');
+    //             // Ubah status teks
+    //             if(percentCompleted < 100) {
+    //                 progressStatus.innerText = `Terupload: ${(progressEvent.loaded / (1024*1024)).toFixed(1)} MB / ${(progressEvent.total / (1024*1024)).toFixed(1)} MB`;
+    //             } else {
+    //                 progressStatus.innerText = "Finishing... Tunggu respon server.";
+    //                 uploadSpeed.innerText = "";
+    //                 progressBar.classList.add('bg-success');
+    //                 progressBar.classList.remove('bg-primary');
+    //             }
+    //         }
+    //     })
+    //     .then(function (response) {
+    //         // Sukses
+    //         window.location.reload(); // Reload halaman untuk memunculkan flash message sukses dari Laravel
+    //     })
+    //     .catch(function (error) {
+    //         // Gagal
+    //         console.error(error);
+    //         btnSubmit.disabled = false;
+    //         btnSubmit.innerText = "Simpan Video";
+    //         progressArea.classList.add('d-none');
             
-            // Tampilkan Pesan Error
-            errorMessage.classList.remove('d-none');
-            if (error.response && error.response.data && error.response.data.message) {
-                 errorMessage.innerText = "Gagal: " + error.response.data.message;
-            } else if (error.response && error.response.status === 413) {
-                 errorMessage.innerText = "Gagal: File terlalu besar (Melebihi batas server). Cek settingan Nginx/PHP.";
-            } else {
-                 errorMessage.innerText = "Terjadi kesalahan saat mengupload.";
-            }
+    //         // Tampilkan Pesan Error
+    //         errorMessage.classList.remove('d-none');
+    //         if (error.response && error.response.data && error.response.data.message) {
+    //              errorMessage.innerText = "Gagal: " + error.response.data.message;
+    //         } else if (error.response && error.response.status === 413) {
+    //              errorMessage.innerText = "Gagal: File terlalu besar (Melebihi batas server). Cek settingan Nginx/PHP.";
+    //         } else {
+    //              errorMessage.innerText = "Terjadi kesalahan saat mengupload.";
+    //         }
             
-            alert("Upload Gagal! Cek pesan error.");
-        });
-    });
+    //         alert("Upload Gagal! Cek pesan error.");
+    //     });
+    // });
     </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/resumable.js/1.1.0/resumable.min.js"></script>
-        <input type="file" id="videoUpload">
+
     <script>
     let r = new Resumable({
         target: "{{ route('upload.chunk') }}",
         query: {_token: "{{ csrf_token() }}"},
         fileType: ['mp4','mov','avi'],
-        chunkSize: 5 * 1024 * 1024, // 5MB per chunk
+        chunkSize: 5 * 1024 * 1024, // 5MB
         simultaneousUploads: 1,
         testChunks: false
     });
 
-    r.assignBrowse(document.getElementById('videoUpload'));
+    let progressBar = document.getElementById('progressBar');
 
-    r.on('fileAdded', function(file){
+    r.assignBrowse(document.getElementById('video_file'));
+
+    document.getElementById('startUpload').addEventListener('click', function(){
+        if (r.files.length === 0) {
+            alert("Pilih file dulu!");
+            return;
+        }
         r.upload();
     });
 
     r.on('fileProgress', function(file){
-        console.log('Progress: ' + Math.floor(file.progress() * 100) + '%');
+        let percent = Math.floor(file.progress() * 100);
+        progressBar.style.width = percent + "%";
+        progressBar.innerText = percent + "%";
     });
 
     r.on('fileSuccess', function(file, response){
-        alert('Upload selesai!');
+        alert("Upload selesai!");
+        location.reload();
+    });
+
+    r.on('fileError', function(file, message){
+        console.error(message);
+        alert("Upload gagal!");
     });
     </script>
 
