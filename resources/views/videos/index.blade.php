@@ -113,10 +113,17 @@
         headers: {
             'X-CSRF-TOKEN': "{{ csrf_token() }}"
         },
+        fileParameterName: 'video_file', 
         fileType: ['mp4','mov','avi'],
         chunkSize: 5 * 1024 * 1024,
         simultaneousUploads: 1,
         testChunks: false
+    });
+
+    document.getElementById('video_file').addEventListener('change', function(e){
+        if (e.target.files.length > 0) {
+            alert("File dipilih: " + e.target.files[0].name);
+        }
     });
 
     let progressBar = document.getElementById('progressBar');
