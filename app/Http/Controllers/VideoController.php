@@ -4,49 +4,63 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Video;
+use Pion\Laravel\ChunkUpload\Receiver\FileReceiver;
+use Pion\Laravel\ChunkUpload\Handler\HandlerFactory;
 use Illuminate\Support\Facades\Storage;
 
 class VideoController extends Controller
 {
-    public function index()
+    public function uploadChunk(Request $request)
     {
-        // Ambil video terakhir yang diupload/diset
-        $video = Video::latest()->first();
-        return view('videos.index', compact('video'));
-    }
+        $receiver = new FileReceiver(
+            "video_file",
+            $request,
+            HandlerFactory::classFromRequest($request)
+        );
 
-    public function update(Request $request)
-    {
-        $request->validate([
-            'type' => 'required|in:local,youtube',
-            // Validasi kondisional: Kalau type=local wajib ada file, kalau youtube wajib url
-            'video_file' => 'required_if:type,local|mimes:mp4,mov,avi|max:2048000', // Max 2GB
-            'video_url'  => 'required_if:type,youtube|nullable|url',
-        ]);
+        if (!$receiver->isUploaded()) {
+            return response()->json(['error' => 'Upload gagal'], 400);
+        }
 
-        // Hapus data lama (Opsional: jika ingin hanya menyimpan 1 record di DB)
-        // Video::truncate(); 
+        $save = $receiver->receive();
 
-        if ($request->type == 'local') {
-            // Hapus file lama jika ada (opsional)
-            // Storage::disk('public')->delete($oldFile);
+        if ($save->isFinished()) {
 
-            // Proses Upload File
-            $path = $request->file('video_file')->store('videos', 'public');
+            $file = $save->getFile();
+
+            // 🔥 Buat nama unik (anti tabrakan)
+            $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
+
+            // 🔥 Simpan manual supaya lebih stabil
+            Storage::disk('public')->putFileAs(
+                'videos',
+                $file,
+                $fileName
+            );
+
+            // Hapus file temporary chunk
+            unlink($file->getPathname());
+
+            // Simpan ke database
+            $path = 'videos/' . $fileName;
 
             Video::create([
                 'type' => 'local',
                 'url'  => $path
             ]);
 
-        } else {
-            // Simpan URL YouTube
-            Video::create([
-                'type' => 'youtube',
-                'url'  => $request->video_url
+            return response()->json([
+                'success' => true,
+                'path' => $path
             ]);
         }
 
-        return redirect()->back()->with('success', 'Video berhasil diperbarui!');
+        // Kalau belum selesai
+        $handler = $save->handler();
+
+        return response()->json([
+            "done" => $handler->getPercentageDone(),
+        ]);
     }
+
 }

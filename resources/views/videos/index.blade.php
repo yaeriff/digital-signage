@@ -192,7 +192,34 @@
             alert("Upload Gagal! Cek pesan error.");
         });
     });
-
     </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/resumable.js/1.1.0/resumable.min.js"></script>
+        <input type="file" id="videoUpload">
+    <script>
+    let r = new Resumable({
+        target: "{{ route('upload.chunk') }}",
+        query: {_token: "{{ csrf_token() }}"},
+        fileType: ['mp4','mov','avi'],
+        chunkSize: 5 * 1024 * 1024, // 5MB per chunk
+        simultaneousUploads: 1,
+        testChunks: false
+    });
+
+    r.assignBrowse(document.getElementById('videoUpload'));
+
+    r.on('fileAdded', function(file){
+        r.upload();
+    });
+
+    r.on('fileProgress', function(file){
+        console.log('Progress: ' + Math.floor(file.progress() * 100) + '%');
+    });
+
+    r.on('fileSuccess', function(file, response){
+        alert('Upload selesai!');
+    });
+    </script>
+
 </body>
 </html>
