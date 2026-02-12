@@ -29,7 +29,23 @@
                             </div>
                         @else
                             <span class="badge bg-danger mb-2">YouTube</span>
-                            <p class="text-muted small">{{ $video->url }}</p>
+                            <div class="ratio ratio-16x9 w-50 mx-auto">
+                                {{-- Fungsi PHP untuk ubah URL ke format Embed --}}
+                                @php
+                                    $url = $video->url;
+                                    $videoId = "";
+                                    if (preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/', $url, $match)) {
+                                        $videoId = $match[1];
+                                    }
+                                @endphp
+                                
+                                @if($videoId)
+                                    <iframe src="https://www.youtube.com/embed/{{ $videoId }}?autoplay=1&mute=1&loop=1&playlist={{ $videoId }}" 
+                                            frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                                @else
+                                    <p class="text-danger">Link YouTube tidak valid</p>
+                                @endif
+                            </div>
                         @endif
                     @else
                         <p class="text-muted">Belum ada video diatur.</p>
