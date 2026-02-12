@@ -74,6 +74,8 @@
                         Upload Video
                     </button>
 
+                    <div class="mt-2 small text-muted" id="fileInfo"></div>
+
                     <div class="mt-3">
                         <video id="previewVideo" class="w-50 d-none" controls></video>
                     </div>
@@ -103,11 +105,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/resumable.js/1.1.0/resumable.min.js"></script>
 
     <script>
-    let r = new Resumable({
+        let r = new Resumable({
         target: "{{ route('upload.chunk') }}",
-        query: {_token: "{{ csrf_token() }}"},
+        headers: {
+            'X-CSRF-TOKEN': "{{ csrf_token() }}"
+        },
         fileType: ['mp4','mov','avi'],
-        chunkSize: 5 * 1024 * 1024, // 5MB
+        chunkSize: 5 * 1024 * 1024,
         simultaneousUploads: 1,
         testChunks: false
     });
@@ -142,6 +146,7 @@
 
     let fileInput = document.getElementById('video_file');
     let preview = document.getElementById('previewVideo');
+    let fileInfo = document.getElementById('fileInfo');
 
     fileInput.addEventListener('change', function(e){
         const file = e.target.files[0];
@@ -150,7 +155,14 @@
         const url = URL.createObjectURL(file);
         preview.src = url;
         preview.classList.remove('d-none');
+
+        fileInfo.innerHTML = `
+            Nama File: <b>${file.name}</b><br>
+            Ukuran: ${(file.size / (1024*1024)).toFixed(2)} MB<br>
+            Tipe: ${file.type}
+        `;
     });
+
 
     </script>
 

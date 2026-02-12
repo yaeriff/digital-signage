@@ -30,7 +30,7 @@ CMD php -S 0.0.0.0:${PORT} -t public
 
 RUN php artisan migrate --force || true
 
-RUN echo "upload_max_filesize=2G" >> /usr/local/etc/php/conf.d/uploads.ini
-RUN echo "post_max_size=2G" >> /usr/local/etc/php/conf.d/uploads.ini
-RUN echo "max_execution_time=1200" >> /usr/local/etc/php/conf.d/uploads.ini
-RUN echo "max_input_time=1200" >> /usr/local/etc/php/conf.d/uploads.ini
+RUN echo "upload_max_filesize=500M" >> /usr/local/etc/php/conf.d/uploads.ini
+RUN echo "post_max_size=500M" >> /usr/local/etc/php/conf.d/uploads.ini
+RUN echo "max_execution_time=600" >> /usr/local/etc/php/conf.d/uploads.ini
+RUN echo "max_input_time=600" >> /usr/local/etc/php/conf.d/uploads.ini
