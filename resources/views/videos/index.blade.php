@@ -3,8 +3,8 @@
 <head>
     <title>Kelola Video - Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="{{ asset('js/axios.js') }}"></script>
-    <script src="{{ asset('js/resumable.js') }}"></script>
+    <script src="{{ asset('signage/assets/js/axios.js') }}"></script>
+    <script src="{{ asset('signage/assets/js/resumable.js') }}"></script>
 
 </head>
 <body class="bg-light">
