@@ -85,70 +85,86 @@
     </div>
 
     <script>
-    // Pastikan fungsi toggle jalan meskipun script lain error
+        // 1. Fungsi toggle tetap di luar agar bisa dipanggil atribut onclick HTML
         function toggleInput() {
             const isYoutube = document.getElementById('typeYoutube').checked;
-            document.getElementById('containerLocal').classList.toggle('d-none', isYoutube);
-            document.getElementById('containerYoutube').classList.toggle('d-none', !isYoutube);
+            const containerLocal = document.getElementById('containerLocal');
+            const containerYoutube = document.getElementById('containerYoutube');
+            
+            if (isYoutube) {
+                containerLocal.classList.add('d-none');
+                containerYoutube.classList.remove('d-none');
+            } else {
+                containerLocal.classList.remove('d-none');
+                containerYoutube.classList.add('d-none');
+            }
         }
 
-        // Inisialisasi setelah semua library siap
-        window.onload = function() {
-            let r; 
+        // 2. Inisialisasi variabel r di scope utama script
+        let r;
 
-            document.addEventListener("DOMContentLoaded", function() {
-                // Pastikan library sudah dimuat
-                if (typeof Resumable !== 'undefined') {
-                    r = new Resumable({
-                        target: "{{ route('upload.chunk') }}",
-                        headers: { 'X-CSRF-TOKEN': "{{ csrf_token() }}" },
-                        fileParameterName: 'video_file',
-                        chunkSize: 5 * 1024 * 1024,
-                        testChunks: false
-                    });
+        document.addEventListener("DOMContentLoaded", function() {
+            // Inisialisasi Resumable jika library berhasil dimuat
+            if (typeof Resumable !== 'undefined') {
+                r = new Resumable({
+                    target: "{{ route('upload.chunk') }}",
+                    headers: { 'X-CSRF-TOKEN': "{{ csrf_token() }}" },
+                    fileParameterName: 'video_file',
+                    chunkSize: 5 * 1024 * 1024,
+                    testChunks: false
+                });
 
-                    // Hubungkan input file ke Resumable
-                    r.assignBrowse(document.getElementById('video_file'));
-                    
-                    console.log("Resumable siap digunakan.");
-                } else {
-                    console.error("Library Resumable gagal dimuat! Periksa koneksi internet atau CDN.");
-                }
-            });
+                r.assignBrowse(document.getElementById('video_file'));
 
-            // 2. Logika Tombol Simpan (Local & YouTube)
+                // Tambahkan event handling dasar untuk progress
+                r.on('fileProgress', function(file) {
+                    let percent = Math.floor(file.progress() * 100);
+                    let pb = document.getElementById('progressBar');
+                    pb.style.width = percent + "%";
+                    pb.innerText = percent + "%";
+                });
+
+                r.on('fileSuccess', function(file, response) {
+                    alert("Upload file berhasil!");
+                    location.reload();
+                });
+
+                r.on('fileError', function(file, message) {
+                    alert("Upload gagal: " + message);
+                });
+            }
+
+            // 3. Logika Tombol Simpan
             document.getElementById('startUpload').addEventListener('click', function() {
                 const isYoutube = document.getElementById('typeYoutube').checked;
 
                 if (isYoutube) {
                     const url = document.getElementById('video_url').value;
-                    if (!url) return alert("Isi link YouTube!");
+                    if (!url) return alert("Masukkan link YouTube dulu!");
 
-                    // Gunakan fetch jika axios diblokir browser
-                    fetch("{{ route('video.update') }}", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                        },
-                        body: JSON.stringify({ type: 'youtube', video_url: url })
+                    // Gunakan Axios untuk simpan link (Pastikan route video.update sudah ada di web.php)
+                    axios.post("{{ route('video.update') }}", {
+                        type: 'youtube',
+                        video_url: url
                     })
-                    .then(res => res.json())
-                    .then(data => {
+                    .then(response => {
                         alert("Link YouTube berhasil disimpan!");
                         location.reload();
                     })
-                    .catch(err => alert("Gagal simpan link. Cek koneksi/blokir browser."));
+                    .catch(error => {
+                        alert("Gagal menyimpan link. Cek controller atau route.");
+                    });
 
                 } else {
+                    // Pastikan r sudah terdefinisi dan ada file yang dipilih
                     if (r && r.files.length > 0) {
                         r.upload();
                     } else {
-                        alert("Pilih file video dulu! (Pastikan sistem sudah siap)");
+                        alert("Sistem belum siap atau file belum dipilih!");
                     }
                 }
             });
-        };
+        });
     </script>
 
 </body>
